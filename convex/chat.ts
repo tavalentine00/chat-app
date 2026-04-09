@@ -22,9 +22,9 @@ export const sendMessage = mutation({
 });
 
 export const getMessages = query({
-    args: {},
-    handler: async (ctx) => {
-        const messages = await ctx.db.query("messages").order("desc").take(50);
+    args: { nameFilter: v.string() },
+    handler: async (ctx, args) => {
+        const messages = args.nameFilter ? await ctx.db.query("messages").withIndex("by_user", (q) => q.eq("user", args.nameFilter)).order("desc").take(50) : await ctx.db.query("messages").order("desc").take(50);
         return messages.reverse();
     },
 });

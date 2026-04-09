@@ -6,15 +6,11 @@ import { useQuery, useMutation } from "convex/react";
 const NAME = getOrSetFakeName();
 
 export default function App() {
-  const sendMessage = useMutation(api.chat.sendMessage);
-  const messages = useQuery(api.chat.getMessages);
-  // const messages = [
-  //   { _id: "1", user: "Alice", body: "Good morning!" },
-  //   { _id: "2", user: NAME, body: "Beautiful sunrise today" },
-  // ];
-  // TODO: Add mutation hook here.
-  
+  const [nameFilter, setNameFilter] = useState("");
   const [newMessageText, setNewMessageText] = useState("");
+  const sendMessage = useMutation(api.chat.sendMessage);
+  const messages = useQuery(api.chat.getMessages, { nameFilter });
+  
   useEffect(() => {
     // Make sure scrollTo works on button click in Chrome
     setTimeout(() => {
@@ -29,6 +25,15 @@ export default function App() {
         <p>
           Connected as <strong>{NAME}</strong>
         </p>
+        <div className="name-filter">
+          <input
+            type="text"
+            value={nameFilter}
+            onChange={(e) => setNameFilter(e.target.value)}
+            placeholder="Filter by name..."
+            className="filter-input"
+            ></input>
+        </div>
       </header>
       {messages?.map((message) => (
         <article
